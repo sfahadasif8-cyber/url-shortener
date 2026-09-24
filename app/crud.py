@@ -1,3 +1,4 @@
+import json
 import secrets
 import string
 
@@ -5,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app import models
+from app.redis_client import redis_client
 from app.schemas import LinkCreate
 
 
@@ -33,13 +35,50 @@ def create_link(db: Session, link_data: LinkCreate) -> models.Link:
     db.commit()
     db.refresh(link)
 
+    redis_client.set(
+        f"link:{link.short_code}",
+        json.dumps(
+            {
+                "id": link.id,
+                "short_code": link.short_code,
+                "original_url": link.original_url,
+            }
+        ),
+    )
+
     return link
 
 
 def get_link_by_code(db: Session, short_code: str) -> models.Link | None:
-    return db.scalar(
+    cached_data = redis_client.get(f"link:{short_code}")
+
+    if cached_data is not None:
+        data = json.loads(cached_data)
+
+        return models.Link(
+            id=data["id"],
+            short_code=data["short_code"],
+            original_url=data["original_url"],
+        )
+
+    link = db.scalar(
         select(models.Link).where(models.Link.short_code == short_code)
     )
+
+    if link is not None:
+        redis_client.set(
+            f"link:{link.short_code}",
+            json.dumps(
+                {
+                    "id": link.id,
+                    "short_code": link.short_code,
+                    "original_url": link.original_url,
+                }
+            ),
+        )
+
+    return link
+
 def record_click(
     db: Session,
     link: models.Link,
@@ -60,7 +99,9 @@ def record_click(
 
     return click
 def get_link_stats(db: Session, short_code: str):
-    link = get_link_by_code(db, short_code)
+    link = db.scalar(
+        select(models.Link).where(models.Link.short_code == short_code)
+    )
 
     if link is None:
         return None
