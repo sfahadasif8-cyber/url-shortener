@@ -98,3 +98,10 @@ def test_stats_missing_link_returns_404():
     assert response.json() == {
         "detail": "Short link not found"
     }
+def test_invalid_url_returns_422():
+    response = client.post(
+        "/links",
+        json={"original_url": "not-a-url"},
+    )
+
+    assert response.status_code == 422
