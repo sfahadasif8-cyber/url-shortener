@@ -15,16 +15,23 @@ Features
 7. User-agent tracking
 8. SHA-256 IP hashing for privacy-conscious analytics
 9. Click statistics endpoint
-10. PostgreSQL database
-11. SQLAlchemy ORM
-12. Pydantic validation
-13. Automated tests with Pytest
-14. Dockerized application
-15. Docker Compose multi-container setup
-16. Nginx reverse proxy
-17. GitHub Actions CI
-18. PostgreSQL service in CI
-19. Persistent PostgreSQL storage
+10. Interactive web frontend
+11. Existing-link analytics tracker
+12. Automatic analytics refresh
+13. Manual analytics refresh
+14. Copy generated short URLs
+15. PostgreSQL database
+16. SQLAlchemy ORM
+17. Pydantic validation
+18. Automated tests with Pytest
+19. Dockerized application
+20. Docker Compose multi-container setup
+21. Nginx reverse proxy
+22. GitHub Actions CI
+23. GitHub Actions Docker image publishing
+24. GitHub Container Registry (GHCR)
+25. PostgreSQL service in CI
+26. Persistent PostgreSQL storage
 
 Architecture
 
@@ -45,7 +52,23 @@ FastAPI
        ▼
    PostgreSQL
 
-CI Pipeline
+Frontend
+
+The FastAPI application also serves an interactive browser-based frontend.
+
+The frontend allows users to:
+
+- Create short URLs
+- Copy generated URLs
+- Open generated short URLs
+- View click counts
+- Refresh analytics manually
+- Automatically refresh analytics
+- Track analytics for an existing short URL
+
+The frontend is built with plain HTML, CSS, and JavaScript and is served directly by FastAPI.
+
+CI/CD Pipeline
 
 Git Push
    │
@@ -56,10 +79,12 @@ GitHub Actions
    │
    ├── Start PostgreSQL
    │
-   └── Run Pytest
+   ├── Run Pytest
+   │
+   └── Build Docker Image
           │
           ▼
-        Tests
+         GHCR
 
 Tech Stack
 
@@ -72,9 +97,11 @@ Pydantic	        Request/response validation
 Pytest	            Automated testing
 Docker	            Application containerization
 Docker Compose	    Multi-container orchestration
-Nginx	            Reverse proxy
-GitHub Actions  	Continuous integration
+Nginx	              Reverse proxy
+GitHub Actions  	  Continuous integration
 Git	                Version control
+GitHub Container Registry    Docker image registry
+HTML/CSS/JavaScript          Interactive web frontend
 
 API Endpoints
 
@@ -214,8 +241,9 @@ The project currently contains tests covering:
 3. Short-code generation
 4. Redirect behavior
 5. Click recording
-6. Statistics
-7. Missing links
+6. Multiple clicks counting
+7. Statistics
+8. Missing links
 
 Continuous Integration:
 
@@ -242,28 +270,28 @@ Project Structure
 
 url-shortener/
 ├── app/
-│   ├── crud.py
-│   ├── database.py
 │   ├── main.py
 │   ├── models.py
-│   └── schemas.py
-│
-├── nginx/
-│   └── default.conf
-│
+│   ├── schemas.py
+│   ├── crud.py
+│   ├── database.py
+│   └── static/
+│       ├── index.html
+│       ├── style.css
+│       └── app.js
 ├── tests/
 │   └── test_main.py
-│
+├── nginx/
+│   └── default.conf
 ├── .github/
 │   └── workflows/
-│       └── ci.yml
-│
+│       ├── ci.yml
+│       └── cd.yml
 ├── Dockerfile
 ├── docker-compose.yml
-├── pytest.ini
 ├── requirements.txt
+├── pytest.ini
 └── README.md
-
 
 Future Improvements
 
