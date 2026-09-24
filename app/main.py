@@ -1,6 +1,7 @@
 import hashlib
 from fastapi import Depends, FastAPI, HTTPException,Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from app import crud, models
@@ -15,7 +16,12 @@ app = FastAPI(
     description="A URL shortener with click analytics.",
     version="1.0.0",
 )
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
+
+@app.get("/", include_in_schema=False)
+def frontend():
+    return FileResponse("app/static/index.html") 
 
 @app.get("/health")
 def health():

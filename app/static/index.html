@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shortly — URL Shortener</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <main class="page">
+
+        <nav class="navbar">
+            <div class="brand">
+                <span class="brand-mark">↗</span>
+                <span>Shortly</span>
+            </div>
+
+            <a href="/docs" class="docs-link">
+                API Docs
+                <span>↗</span>
+            </a>
+        </nav>
+
+
+        <section class="hero">
+
+            <div class="hero-badge">
+                <span class="status-dot"></span>
+                Fast, simple URL shortening
+            </div>
+
+            <h1>
+                Turn long links into
+                <span>short links.</span>
+            </h1>
+
+            <p class="hero-text">
+                Create clean, shareable links and keep track of every click.
+            </p>
+
+
+            <div class="shortener-card">
+
+                <div class="input-wrapper">
+                    <span class="input-icon">🔗</span>
+
+                    <input
+                        id="url-input"
+                        type="url"
+                        placeholder="Paste your long URL here..."
+                        autocomplete="off"
+                    >
+
+                    <button id="shorten-btn">
+                        Shorten URL
+                        <span>→</span>
+                    </button>
+                </div>
+
+                <p id="error-message" class="error-message"></p>
+
+            </div>
+
+
+            <div id="result-card" class="result-card hidden">
+
+                <div class="result-header">
+                    <div>
+                        <span class="result-label">YOUR SHORT LINK</span>
+                        <a id="short-url" href="#" target="_blank"></a>
+                    </div>
+
+
+
+                    <div class="result-actions">
+                        <button id="refresh-btn" class="copy-btn">
+                            Refresh
+                        </button>
+
+                        <button id="copy-btn" class="copy-btn">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+
+                <div class="original-url">
+                    <span>Original</span>
+                    <p id="original-url"></p>
+                </div>
+               
+                <div class="analytics-row">
+                    <div class="analytics-item">
+                        <span class="analytics-label">CLICKS</span>
+                        <strong id="click-count">0</strong>
+                    </div>
+
+                    <a
+                        id="stats-link"
+        class="stats-link"
+        href="#"
+        target="_blank"
+    >
+        View analytics ↗
+    </a>
+</div>
+            </div>
+
+<section class="tracker">
+
+    <div class="tracker-heading">
+        <span class="tracker-label">LINK ANALYTICS</span>
+
+        <h2>Track an existing link</h2>
+
+        <p>
+            Paste a Shortly link to see its current click count.
+        </p>
+    </div>
+
+    <div class="tracker-input-wrapper">
+
+        <input
+            id="tracker-input"
+            type="url"
+            placeholder="https://your-short-link..."
+            autocomplete="off"
+        >
+
+        <button id="track-btn">
+            Check analytics
+            <span>→</span>
+        </button>
+
+    </div>
+
+    <p id="tracker-error" class="error-message"></p>
+
+    <div id="tracker-result" class="tracker-result hidden">
+
+        <div class="tracker-stat">
+            <span class="analytics-label">TOTAL CLICKS</span>
+            <strong id="tracker-click-count">0</strong>
+        </div>
+
+        <div class="tracker-details">
+
+            <div>
+                <span>Short link</span>
+                <a
+                    id="tracker-short-link"
+                    href="#"
+                    target="_blank"
+                ></a>
+            </div>
+
+            <div>
+                <span>Original URL</span>
+                <p id="tracker-original-url"></p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+            <div class="features">
+
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant</h3>
+                    <p>Create a short link in seconds.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <h3>Analytics</h3>
+                    <p>Track clicks on your links.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privacy</h3>
+                    <p>IP addresses are securely hashed.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <footer>
+            <span>Shortly</span>
+            <span>FastAPI · PostgreSQL · Docker</span>
+        </footer>
+
+    </main>
+
+
+    <script src="/static/app.js"></script>
+
+</body>
+</html>
