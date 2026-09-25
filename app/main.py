@@ -5,11 +5,9 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from app import crud, models
-from app.database import Base, engine, get_db
+from app.database import get_db
 from app.schemas import LinkCreate, LinkResponse, StatsResponse
 
-
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="URL Shortener API",
