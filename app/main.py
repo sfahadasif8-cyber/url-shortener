@@ -44,7 +44,10 @@ def create_short_link(
     if is_rate_limited(rate_key, limit=10, window_seconds=60):
         raise HTTPException(status_code=429, detail="Too many requests, slow down.")
 
-    return crud.create_link(db, link_data)
+    try:
+        return crud.create_link(db, link_data)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
 
 
 @app.get("/{short_code}")

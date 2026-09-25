@@ -224,3 +224,42 @@ def test_create_link_stores_matching_data_in_db_and_redis(client, db):
     assert cached_link["id"] == link.id
     assert cached_link["short_code"] == link.short_code
     assert cached_link["original_url"] == link.original_url
+def test_create_link_with_custom_code(client):
+    response = client.post(
+        "/links",
+        json={
+            "original_url": "https://example.com",
+            "custom_code": "fahadtest",
+        },
+    )
+
+    assert response.status_code == 201
+
+    data = response.json()
+
+    assert data["short_code"] == "fahadtest"
+
+
+def test_duplicate_custom_code_returns_409(client):
+    first_response = client.post(
+        "/links",
+        json={
+            "original_url": "https://example.com",
+            "custom_code": "unique123",
+        },
+    )
+
+    assert first_response.status_code == 201
+
+    second_response = client.post(
+        "/links",
+        json={
+            "original_url": "https://google.com",
+            "custom_code": "unique123",
+        },
+    )
+
+    assert second_response.status_code == 409
+    assert second_response.json() == {
+        "detail": "Custom short code already exists"
+    }

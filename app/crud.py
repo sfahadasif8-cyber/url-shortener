@@ -14,17 +14,27 @@ def generate_short_code(length: int = 6) -> str:
     characters = string.ascii_letters + string.digits
     return "".join(secrets.choice(characters) for _ in range(length))
 
-
 def create_link(db: Session, link_data: LinkCreate) -> models.Link:
-    while True:
-        short_code = generate_short_code()
+    if link_data.custom_code:
+        short_code = link_data.custom_code
 
         existing_link = db.scalar(
             select(models.Link).where(models.Link.short_code == short_code)
         )
 
-        if existing_link is None:
-            break
+        if existing_link is not None:
+            raise ValueError("Custom short code already exists")
+
+    else:
+        while True:
+            short_code = generate_short_code()
+
+            existing_link = db.scalar(
+                select(models.Link).where(models.Link.short_code == short_code)
+            )
+
+            if existing_link is None:
+                break
 
     link = models.Link(
         short_code=short_code,
@@ -47,7 +57,6 @@ def create_link(db: Session, link_data: LinkCreate) -> models.Link:
     )
 
     return link
-
 
 def get_link_by_code(db: Session, short_code: str) -> models.Link | None:
     cached_data = redis_client.get(f"link:{short_code}")

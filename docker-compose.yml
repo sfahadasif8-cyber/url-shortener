@@ -19,8 +19,8 @@ services:
     build: .
     environment:
       DATABASE_URL: postgresql+psycopg://urluser:urlpassword@db:5432/urlshortener
-    ports:
-      - "8001:8000"
+      REDIS_URL: redis://redis:6379
+
     depends_on:
       - db
   nginx:
