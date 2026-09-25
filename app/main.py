@@ -2,6 +2,7 @@ import hashlib
 from fastapi import Depends, FastAPI, HTTPException,Request
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from app.redis_client import is_rate_limited
 from sqlalchemy.orm import Session
 
 from app import crud, models
@@ -25,12 +26,18 @@ def frontend():
 def health():
     return {"status": "ok"}
 
-
 @app.post("/links", response_model=LinkResponse, status_code=201)
 def create_short_link(
     link_data: LinkCreate,
+    request: Request,
     db: Session = Depends(get_db),
 ):
+    client_ip = request.client.host if request.client else "unknown"
+    rate_key = f"ratelimit:create_link:{client_ip}"
+
+    if is_rate_limited(rate_key, limit=10, window_seconds=60):
+        raise HTTPException(status_code=429, detail="Too many requests, slow down.")
+
     return crud.create_link(db, link_data)
 
 @app.get("/{short_code}")
