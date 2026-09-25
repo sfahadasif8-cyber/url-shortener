@@ -32,13 +32,20 @@ def create_short_link(
     request: Request,
     db: Session = Depends(get_db),
 ):
-    client_ip = request.client.host if request.client else "unknown"
+    forwarded_for = request.headers.get("x-forwarded-for")
+
+    if forwarded_for:
+        client_ip = forwarded_for.split(",")[0].strip()
+    else:
+        client_ip = request.client.host if request.client else "unknown"
+
     rate_key = f"ratelimit:create_link:{client_ip}"
 
     if is_rate_limited(rate_key, limit=10, window_seconds=60):
         raise HTTPException(status_code=429, detail="Too many requests, slow down.")
 
     return crud.create_link(db, link_data)
+
 
 @app.get("/{short_code}")
 def redirect_to_original(
