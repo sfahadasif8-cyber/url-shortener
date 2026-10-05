@@ -2,7 +2,7 @@ import json
 import secrets
 import string
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app import models
@@ -115,6 +115,10 @@ def get_link_stats(db: Session, short_code: str):
     if link is None:
         return None
 
-    click_count = len(link.clicks)
+    click_count = db.scalar(
+        select(func.count()).select_from(models.Click).where(
+            models.Click.link_id == link.id
+        )
+    )
 
     return link, click_count
